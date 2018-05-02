@@ -54,17 +54,29 @@ public class TinyCoach
 
     private void addViewToWindow(View view) {
 
+        int permissionFlag = PermissionCompat.getFlag();
+
         WindowManager.LayoutParams paramsF = new WindowManager.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
-                WindowManager.LayoutParams.TYPE_PHONE,
+                permissionFlag,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 PixelFormat.TRANSLUCENT);
 
         // configure starting coordinates
-        paramsF.gravity = fpsConfig.startingGravity;
-        paramsF.x = fpsConfig.startingXPosition;
-        paramsF.y = fpsConfig.startingYPosition;
+        if (fpsConfig.xOrYSpecified) {
+            paramsF.x = fpsConfig.startingXPosition;
+            paramsF.y = fpsConfig.startingYPosition;
+            paramsF.gravity = FPSConfig.DEFAULT_GRAVITY;
+        } else if (fpsConfig.gravitySpecified) {
+            paramsF.x = 0;
+            paramsF.y = 0;
+            paramsF.gravity = fpsConfig.startingGravity;
+        } else {
+            paramsF.gravity = FPSConfig.DEFAULT_GRAVITY;
+            paramsF.x = fpsConfig.startingXPosition;
+            paramsF.y = fpsConfig.startingYPosition;
+        }
 
         // add view to the window
         windowManager.addView(view, paramsF);
